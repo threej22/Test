@@ -1,23 +1,124 @@
-# SpeakerCheck 0.3.0
+[**SpeakerCheck 0.4.0 ZIP 다운로드**](https://github.com/threej22/Test/raw/refs/heads/main/SpeakerCheck-0.4.0-source.zip)
 
-**WAV 분석 화면에서 분석 실행 한 번:**
+![0.4.0 원본 / 입력 비교 화면 (합성 입력 시연)](SpeakerCheck-preview.png)
 
-**PC 1 kHz 출력 → 디바이스 입력 녹음 → WAV 생성 → SoX 분석 → PASS/NG → Log 자동 저장**
+# SpeakerCheck 0.4.0
 
-별도 자동 녹음·양산 메뉴를 없앴습니다. 녹음 조건·저장 위치·시험 이력은 설정으로 옮겼고, 그래프는 기본 접힘입니다.
+**WAV 분석 → 분석 실행** 한 번으로 다음 순서가 자동 진행됩니다.
 
-## 다운로드
+**PC 1 kHz 출력 → 디바이스 입력 녹음 → WAV 생성 → SoX 분석 → PASS/FAIL → Log 저장**
 
-[**0.3.0 ZIP 다운로드**](https://github.com/threej22/Test/raw/refs/heads/main/SpeakerCheck-0.3.0-source.zip)
+메인은 **무음 노이즈 제외 / 포함**의 두 검사 모드, 분석 실행, 큰 **Final Result PASS/FAIL**을 표시합니다. 입출력 장치는 설정에 있으며 제품번호 입력은 없습니다. 그래프는 **그래프 보기**로 펼칩니다.
 
-새 폴더에 **전체 압축 해제** 후 `setup.bat` → `start.bat`를 실행하세요. ZIP 루트에 `launch.py`와 `speakercheck/` 폴더가 함께 있습니다. 실행기 경로 설정과 패키지 누락 안내를 보완했습니다.
+## Windows 실행
 
-Python 3.11 이상과 별도 SoX 설치가 필요합니다. 설정에서 `sox.exe`를 지정하고, 메인에서 입출력 장치를 선택한 뒤 실제 제품 Spec을 설정하세요. 이후 분석 실행만 누르면 됩니다. 제품번호는 선택이며 비워 두면 시험번호가 자동 생성됩니다.
+1. ZIP을 **새 폴더에 전체 압축 해제**합니다. `launch.py`만 복사하면 실행되지 않습니다.
+2. Python 3.11 이상(64 bit, Python Launcher 포함)을 설치합니다.
+3. `setup.bat` → `start.bat` 순서로 실행합니다. 최초 의존성 설치에는 인터넷이 필요합니다.
+4. **설정**에서 설치한 `sox.exe` 경로를 지정합니다. SoX 배포본 전체를 `tools/sox/`에 놓아도 됩니다.
+5. **설정 → 녹음·저장 설정**에서 장치 새로고침 후 PC 스피커 출력과 디바이스 PC 입력을 선택합니다.
+6. **Spec 관리**에서 실제 제품 한계값을 설정·확인합니다. 초기 Spec은 예시이며 확인 전에는 최종 PASS를 표시하지 않습니다.
+7. **분석 실행**을 누릅니다. 이후 재생·녹음·파일 생성·분석·판정·로그 저장은 자동입니다.
 
-![WAV 분석 화면 — 합성 입출력 시연](SpeakerCheck-preview.png)
+디바이스가 Windows 오디오 녹음 장치로 인식되어야 합니다. 독자 UART/USB packet 입력은 지원하지 않습니다. SoX는 별도 설치해야 합니다: https://sourceforge.net/projects/sox/
 
-WAV/SQLite/작업 로그는 자동 저장합니다. 설정의 시험 이력에서 검색·CSV·JSON 저장이 가능합니다. 중단/장치/로그 오류는 PASS로 처리하지 않습니다. 기존 WAV 분석은 설정에서 명시적으로 선택할 수 있습니다.
+압축을 풀면 같은 위치에 아래 구조가 있어야 합니다(0.4.0 ZIP은 중간 `SpeakerCheck/` 폴더 없이 파일을 담았습니다).
 
-테스트 **69개 통과**, 새 ZIP을 실제 추출한 뒤 외부 작업 폴더/Python -I에서 앱 모듈 import 확인. Linux의 합성 오디오 backend + 실제 SoX/SQLite/Qt로 검증했으며 **실제 Windows 오디오 장치 및 EXE 실행은 미검증**입니다. 디바이스가 Windows 녹음 장치로 인식되어야 합니다.
+```text
+launch.py
+start.bat
+setup.bat
+requirements.txt
+speakercheck/
+  __init__.py
+  ui.py
+  ...
+```
 
-ZIP SHA256: `530a3aa3e6cd3410a1533ad8c9d5e750365748ff5f93a2371837f21f913c2ad7`
+`No module named 'speakercheck'`가 발생하면 위 폴더가 모두 있는지 확인하세요. 새 실행기는 앱 경로를 직접 등록하고, 폴더가 없으면 전체 압축 해제 안내를 표시합니다. 시작 오류 상세는 `%TEMP%/SpeakerCheck-startup-error.log`에 저장합니다.
+
+## 기본 검사
+
+- 1 kHz 출력 Peak **-24 dBFS**, 48 kHz, 입력 2채널/출력 2채널.
+- 안정화 1초 후 신호 3초 녹음. 앱이 시작한 톤은 녹음 후 종료됩니다.
+- 제품번호 없이 `TEST-...` 시험번호와 Run ID를 자동 발급해 매 검사를 추적합니다.
+- 좌우 레벨 차이 때문에 스테레오 입력이 필수입니다. 1채널 설정은 검사 시작 시 FAIL 안내를 표시합니다.
+- 두 모드 모두 좌우차·RMS/Peak·클리핑·THD를 검사하며, 무음 포함 모드는 출력 정지 후 무음 1초를 추가 녹음해 Noise도 판정합니다.
+- 상단 **오디오 중지 / Esc**로 중단합니다. 최종 DB commit을 시작한 이후에는 완료된 측정의 저장을 마칩니다.
+- 디바이스 입력은 PC 출력으로 다시 보내지 않습니다. 스피커→디바이스→PC 경로는 실제 외부 연결로 구성하세요.
+
+PC 시스템 볼륨, 입력 게인, AGC/음향 효과는 시험 조건에 맞게 고정하세요. 장치 지연이 크면 설정에서 안정화 시간을 늘리세요.
+
+## 설정으로 옮긴 항목
+
+| 위치 | 항목 |
+|---|---|
+| 설정 상단 | sox.exe 경로 |
+| 녹음·저장 설정 | 입출력 장치, 샘플레이트, 채널, 1 kHz 레벨, 녹음/안정화 시간, 교정, 작업자/스테이션, 저장 폴더 |
+| 기존 WAV·상세 분석 | 기존 파일 분석 모드, WAV/기준 WAV 선택, 신호·무음·응답 구간 |
+| 시험 이력 | 자동 시험번호 검색, 최신 1,000건, 전체 검색 결과 CSV, 선택 보고서 JSON |
+| 측정 안내 | 측정 항목과 필수 조건 설명 |
+
+기존 WAV를 분석하려면 설정의 **기존 WAV 파일을 선택해서 분석**을 켜고 파일을 지정한 뒤 메인의 분석 실행을 누릅니다. 이 모드에서는 새 녹음 대신 선택 파일을 분석합니다. 다시 자동 녹음하려면 해당 선택을 끄세요.
+
+## Spec과 판정
+
+자동 검사는 좌우차·RMS/Peak·클리핑·THD를 항상 사용하고 무음 노이즈는 메인 모드 선택을 따릅니다. Spec 표의 한계값과 확인 상태를 적용합니다. 사용 체크는 기존 WAV 상세 분석용이며 자동 검사 항목을 해제하지 않습니다. **선택한 검사 모드의 사용 항목 표시** 버튼으로 표를 모드와 맞출 수 있습니다. 자동 검사는 SNR/SPL/전체 주파수 응답을 판정에 사용하지 않습니다.
+
+**Final Result는 PASS 또는 FAIL**입니다. 미측정·Spec 미확인·오류·중단도 FAIL로 표시하며 제품 불량과 구분할 상세 상태/사유를 함께 남깁니다. 아래 상태는 상세 로그용입니다.
+
+- **PASS**: 활성 항목 모두 측정 완료·한계 이내·Spec 확인 완료·입력 유효성 확인·로그 commit 완료.
+- **NG**: 활성 항목 중 기준 초과 있음.
+- **INCOMPLETE**: 필수 항목 미측정, 활성 항목 없음, 입력 톤 단절 등.
+- **SPEC REQUIRED**: 제품 Spec 미확인. 항목별 NG는 표에 표시됩니다.
+- **ERROR / ABORTED**: 장치/저장 오류 또는 중단. 합격 아님.
+- **SKIP**: Spec에서 사용하지 않는 항목.
+
+상하한은 경계값을 포함합니다. 다채널은 모든 채널이 기준을 만족해야 합니다. Spec을 수정하면 확인이 해제됩니다.
+
+THD는 정상상태 단일 톤의 주파수를 ±2% 범위에서 추정하고, 전체 신호를 약1초 window로 나눠 계산한 2~5차 THD의 채널별 최댓값을 사용합니다. 자동 녹음은 전체 신호의 약100ms FFT/20ms RMS를 확인하여 뒤쪽 신호 단절이 평균값에 숨겨지는 것을 막습니다.
+
+무음 포함 모드는 톤을 잠시 끄고 안정화 후 무음 1초를 추가 녹음해 Noise를 판정합니다. SNR은 기존 WAV 상세 분석에서 선택할 수 있습니다. SNR은 `10log10((P_signal-P_noise)/P_noise)`이며 전체 대역 무가중입니다. 디지털 0 무음은 노이즈를 알 수 없어 측정 불가입니다.
+
+SPL은 동일 체인의 교정 offset을 적용해야 합니다: `SPL=RMS(dBFS)+offset`. 알려진 94dB SPL 교정 녹음이 -20dBFS면 offset=114dB입니다. 모든 채널에 같은 offset이 적용됩니다. A/C 가중치는 지원하지 않습니다.
+
+고정1kHz로 전체 주파수 응답을 측정할 수는 없습니다. 응답 검사는 기존 WAV 모드에서 광대역 기준 녹음과 DUT 녹음의 Welch PSD 비율을 1/6 octave 대역으로 비교합니다. 같은 sample rate/시험 조건/시간 구간이 필요하며 절대 무향실 응답·위상·sweep deconvolution은 지원하지 않습니다.
+
+## 원본과 입력 비교
+
+- **원본 / 입력 파형**: 자동 검사에서 녹음의 신호 구간 중앙 약 5ms(1kHz 5주기)를 확대합니다. 원본 디지털 출력, 입력 L, 입력 R을 같은 FS 진폭 축에 겹쳐 표시합니다. L/R이 같으면 선이 겹칩니다.
+- **원본 / 입력 주파수**: 같은 길이·Hann 창·스케일로 계산한 원본과 입력 L/R 스펙트럼을 비교합니다. 1~5차 고조파 위치를 표시합니다. 실제 측정 THD는 전체 신호 구간의 별도 분석값입니다.
+- **전체 녹음**: 무음/신호 구간을 포함한 녹음 전체의 최대·최소 포락선을 확인합니다.
+
+원본은 설정한 주파수와 디지털 출력 Peak를 사용해 생성한 기준 사인파이며 물리 스피커 출력을 측정한 값이 아닙니다. 시각 비교를 위해 **기준 파형의 위상만 입력 L에 맞춥니다**. 입력 진폭·좌우차를 정규화하지 않으며 PASS/FAIL 계산에 표시용 보정을 적용하지 않습니다. 주기 신호의 위상 맞춤으로 전파 지연을 측정할 수 없습니다. 주파수 곡선은 0.1초 중앙 구간의 예시이며 전체 대역 응답을 뜻하지 않습니다. 기준 생성 조건·위상·그래프 데이터는 보고서와 SQLite 로그에 보관됩니다. 기존 WAV 분석은 기존 파일의 그래프를 표시합니다.
+
+## 자동 Log
+
+기본 위치: Windows 사용자별 앱 데이터의 `SpeakerCheck/results`. 설정에서 변경할 수 있습니다.
+
+```text
+results/
+  production.sqlite3
+  YYYY-MM-DD/                 # KST 날짜
+    HHMMSS-<run_id>.wav
+    events.jsonl              # UTC 시각
+```
+
+매 시험은 고유 Run ID를 사용합니다. 시작 전 RUNNING을 기록하고 최종 SQLite commit 후 결과를 표시합니다. 자동 시험번호, 작업자, 스테이션, 시각, 소프트웨어/SoX 버전, 입출력 장치, 설정/Spec/교정 snapshot, 원본 SHA256, 측정값, 판정과 사유, 상세 report JSON을 기록합니다. 비정상 종료 후 RUNNING은 합격이 아닙니다. `events.jsonl`의 pending_state는 최종 판정이 아니며 집계에는 SQLite state를 사용하세요.
+
+CSV는 Excel용 UTF-8 BOM이며 측정값과 `final_result` PASS/FAIL을 개별 컬럼으로 제공합니다. 내부 `state`는 오류·미측정·Spec 미확인 등 상세 원인을 유지합니다. 전체 그래프/Spec snapshot은 SQLite 및 JSON 보고서에 보관됩니다. 동일 제품 재검사도 기존 이력을 덮어쓰지 않습니다. 자동 로그는 새 녹음 경로에 적용되며 기존 WAV의 별도 분석은 생산 이력을 추가하지 않습니다.
+
+## 검증과 범위
+
+Linux에서 합성 오디오 backend + 실제 SoX/SQLite/Qt offscreen으로 시험했습니다. Windows 오디오 장치/실제 스피커 체인 및 Windows EXE 빌드는 미검증입니다. 물리 장치 연결, 교정/지연/오디오 효과, 전원/디스크/USB 재연결 장애와 로그 백업을 현장에서 검증해야 합니다. 정해진 시간 녹음 후 판정하며 무기한 실시간 갱신이나 PLC 트리거는 포함하지 않습니다.
+
+Windows EXE 빌드: `build_windows.bat`. 결과 `dist/SpeakerCheck` 폴더 전체를 배포하세요. SoX 바이너리는 포함하지 않으며 재배포 시 라이선스 조건을 확인하세요.
+
+```bash
+python -m pip install -r requirements-dev.txt
+# SoX를 PATH에 넣거나 SOX_BINARY 전체 경로 지정
+python -m pytest tests -q
+python launch.py
+```
+
+Linux CI: `QT_QPA_PLATFORM=offscreen`. 시연: `scripts/preview_capture.py`(합성 입력 + 실제 SoX/SQLite). 합성 WAV 샘플은 `examples/`, 설계/검증 기록은 `docs/`에 있습니다.
