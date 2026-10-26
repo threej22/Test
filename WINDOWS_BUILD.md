@@ -1,21 +1,30 @@
-# Windows 64비트 로컬 빌드
+# Windows 64비트 EXE 한 파일로 로컬 빌드
 
-이 ZIP은 **빌드용 소스**입니다. 빌드 PC에만 Python과 인터넷 연결이 필요하며, 배포받는 PC에는 설치하지 않습니다.
+이 ZIP은 **빌드용 소스**입니다. 빌드 PC에만 Python 3.12 64비트와 인터넷 연결이 필요합니다.
 
-1. Windows 64비트 빌드 PC에 Python 3.12 64비트를 설치합니다. Python Launcher 또는 PATH 등록을 포함합니다.
-2. ZIP 전체를 쓰기 가능한 새 폴더에 압축 해제합니다.
-3. `build_windows.bat`을 실행합니다. 필요한 패키지와 빌드 도구를 설치하고 EXE를 만듭니다.
-4. 파일 선택 창에서 기존의 `sox.exe`를 선택합니다. 원래 SoX 배포 폴더의 DLL·라이선스 파일과 함께 있는 exe를 선택하세요.
-5. 빌드와 자체 검증이 성공하면 `output/SpeakerCheck-0.4.2-windows-x64-portable.zip`을 배포합니다.
+1. ZIP 전체를 쓰기 가능한 새 폴더에 압축 해제합니다.
+2. `build_windows.bat`을 실행합니다.
+시연용 WAV는 빌드 과정에서 자동 생성하므로 빌드 키트에는 포함하지 않습니다.
 
-명령 프롬프트에서 경로를 직접 지정할 수도 있습니다.
+3. 파일 선택 창에서 기존 `sox.exe`를 선택합니다. 원래 배포본의 DLL·라이선스 파일과 함께 있는 exe를 선택하세요.
+4. 빌드와 자체 검증이 성공하면 아래 **EXE 한 파일**을 배포합니다.
+
+```text
+output/SpeakerCheck-0.4.3-windows-x64.exe
+```
+
+압축해서 전달하려면 `output/SpeakerCheck-0.4.3-windows-x64-single-exe.zip`을 사용하세요. 이 ZIP 안에도 `SpeakerCheck.exe` 한 파일만 있습니다. `dist/SpeakerCheck.exe`는 빌드 중간 결과이며, **자체 검증을 통과한 최종 파일은 output에 생성**합니다.
+
+명령 프롬프트에서 SoX 경로를 직접 지정할 수도 있습니다.
 
 ```bat
 build_windows.bat "D:\tools\sox\sox.exe"
 ```
 
-배포 PC: ZIP을 전부 압축 해제하고 `SpeakerCheck/SpeakerCheck.exe`를 실행합니다. Python·pip·setup.bat·SoX를 따로 설치할 필요가 없습니다. **EXE 옆 DLL과 tools 폴더를 함께 유지하세요.** 대상은 Windows 10/11 64비트입니다. 오디오 장치 드라이버와 마이크 권한은 필요합니다.
+배포 PC는 **EXE만 실행**합니다. Python·pip·setup.bat·SoX 설치나 별도 DLL/lib 폴더가 필요 없습니다. Python 런타임, Qt, NumPy/SciPy/Matplotlib, PortAudio, SoX 실행 파일과 인접 DLL, 라이선스를 EXE에 포함합니다. Windows 운영체제나 오디오 장치 드라이버 자체는 포함하지 않습니다. 대상은 Windows 10/11 64비트이며 마이크 권한은 필요합니다.
 
-설치/빌드가 실패하면 창이 유지되고 원인과 로그 위치를 표시합니다. 설치 로그는 `setup.log`, 빌드 로그는 `build.log`입니다. 빌드 스크립트는 실행 파일을 추출한 뒤 Python을 PATH에서 제외한 환경에서 일반 Windows GUI와 offscreen Qt·PortAudio·포함된 SoX·1kHz PASS/혼합톤 FAIL·SQLite 검증을 실행합니다. 물리 오디오 장치를 시험한 것은 아닙니다.
+내부 파일은 실행 시 Windows 사용자 임시 폴더에 자동 추출하므로 시작이 조금 느릴 수 있습니다. 녹음 WAV·SQLite 로그는 기존 사용자 결과 폴더에 저장하며 임시 추출 폴더와 별개입니다.
 
-검증 범위: Linux 소스 테스트 통과. 첫 Windows 소스 검증에서 한글 WAV 경로 문제를 재현하고 파일 핸들로 전달하도록 수정했습니다. 수정 후의 네이티브 Windows 빌드 검증은 이 로컬 빌드 단계에서 실행됩니다. 원격 자동 빌드는 수동 실행으로 변경했습니다.
+실패하면 창이 유지되고 `setup.log` 또는 `build.log`에 원인이 남습니다. 빌드 스크립트는 EXE만 한글 이름의 빈 폴더에 복사하고 Python을 PATH에서 제외한 환경에서 일반 Windows GUI/offscreen, PortAudio, 내장 SoX, 1kHz PASS/혼합톤 FAIL, SQLite 검증을 수행합니다. 실제 스피커·디바이스의 음향 검증은 별도입니다.
+
+소스 테스트는 Linux에서 수행했습니다. 네이티브 Windows 단일 EXE 빌드·검증은 사용자의 로컬 빌드에서 실행됩니다.

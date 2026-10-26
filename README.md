@@ -1,8 +1,8 @@
-[**Windows 64비트 로컬 빌드용 ZIP 다운로드**](https://github.com/threej22/Test/raw/refs/heads/main/SpeakerCheck-0.4.2-windows-build-kit.zip)
+[**Windows 64비트 단일 EXE 로컬 빌드용 ZIP 다운로드**](https://github.com/threej22/Test/raw/refs/heads/main/SpeakerCheck-0.4.3-windows-single-exe-build-kit.zip)
 
-이 ZIP은 빌드용 소스입니다. 빌드 PC에서 `build_windows.bat`을 실행해 포터블 ZIP을 만들면, 배포 PC는 Python이나 setup 설치 없이 `SpeakerCheck.exe`를 실행합니다. [빌드 순서](WINDOWS_BUILD.md)
+`build_windows.bat`을 실행하고 기존 `sox.exe`를 선택하면 DLL·라이브러리·SoX가 내장된 **EXE 한 파일**을 생성합니다. 배포 PC에서는 Python/setup/SoX 설치나 별도 DLL 폴더가 필요 없습니다. 시연 WAV는 빌드 중 자동 생성됩니다. [빌드 순서](WINDOWS_BUILD.md)
 
-# SpeakerCheck 0.4.2
+# SpeakerCheck 0.4.3
 
 **WAV 분석 → 분석 실행** 한 번으로 다음 순서가 자동 진행됩니다.
 
@@ -10,9 +10,9 @@
 
 메인은 **무음 노이즈 제외 / 포함**의 두 검사 모드, 분석 실행, 큰 **Final Result PASS/FAIL**을 표시합니다. 입출력 장치는 설정에 있으며 제품번호 입력은 없습니다. 그래프는 **그래프 보기**로 펼칩니다. 결과의 검사 ID와 이력의 ID를 비교할 수 있습니다.
 
-## Windows 64비트 포터블 빌드
+## Windows 64비트 단일 EXE 빌드
 
-빌드 PC에서 `build_windows.bat`을 실행하고 기존 `sox.exe`를 선택합니다. 성공하면 `output/SpeakerCheck-0.4.2-windows-x64-portable.zip`을 배포하세요. 받는 PC에서는 Python이나 setup을 설치하지 않고 압축 해제 후 `SpeakerCheck.exe`를 실행합니다. 자세한 순서는 [WINDOWS_BUILD.md](WINDOWS_BUILD.md)에 있습니다. `setup.log`와 `build.log`에 오류가 남고 실패 시 창이 닫히지 않습니다.
+빌드 PC에서 `build_windows.bat`을 실행하고 기존 `sox.exe`를 선택합니다. 성공하면 **`output/SpeakerCheck-0.4.3-windows-x64.exe` 한 파일**을 배포하세요. DLL·라이브러리·Python 런타임·SoX·라이선스가 EXE 안에 포함됩니다. 받는 PC는 Python/setup/SoX 설치나 별도 DLL 폴더 없이 EXE를 실행합니다. 내부 파일은 실행 시 사용자 임시 폴더에 자동 추출하며, WAV·로그는 기존 결과 폴더에 저장합니다. [WINDOWS_BUILD.md](WINDOWS_BUILD.md)에 빌드 순서와 검증 범위를 설명했습니다. 실패 시 `setup.log`/`build.log`에 기록하고 창을 유지합니다.
 
 ## Python 소스로 Windows 실행
 
@@ -126,7 +126,7 @@ CSV는 Excel용 UTF-8 BOM이며 측정값과 `final_result` PASS/FAIL을 개별 
 
 Linux에서 합성 오디오 backend + 실제 SoX/SQLite/Qt offscreen으로 시험했습니다. Windows 오디오 장치/실제 스피커 체인 및 Windows EXE 빌드는 미검증입니다. 물리 장치 연결, 교정/지연/오디오 효과, 전원/디스크/USB 재연결 장애와 로그 백업을 현장에서 검증해야 합니다. 정해진 시간 녹음 후 판정하며 무기한 실시간 갱신이나 PLC 트리거는 포함하지 않습니다.
 
-Windows EXE 빌드: `build_windows.bat`. 결과 `dist/SpeakerCheck` 폴더 전체를 배포하세요. SoX 바이너리는 포함하지 않으며 재배포 시 라이선스 조건을 확인하세요.
+Windows 단일 EXE 빌드: `build_windows.bat`. 검증을 통과한 `output/SpeakerCheck-0.4.3-windows-x64.exe` 한 파일을 배포하세요. 선택한 SoX와 인접 DLL, Python/수치/Qt/오디오 런타임, 라이선스 파일이 EXE에 포함됩니다.
 
 ```bash
 python -m pip install -r requirements-dev.txt
