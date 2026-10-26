@@ -1,10 +1,8 @@
-[**SpeakerCheck 0.4.1 ZIP 다운로드**](https://github.com/threej22/Test/raw/refs/heads/main/SpeakerCheck-0.4.1-source.zip)
+[**Windows 64비트 로컬 빌드용 ZIP 다운로드**](https://github.com/threej22/Test/raw/refs/heads/main/SpeakerCheck-0.4.2-windows-build-kit.zip)
 
-![간편 장치 선택과 입력 레벨 (합성 오디오 시연)](SpeakerCheck-devices-preview.png)
+이 ZIP은 빌드용 소스입니다. 빌드 PC에서 `build_windows.bat`을 실행해 포터블 ZIP을 만들면, 배포 PC는 Python이나 setup 설치 없이 `SpeakerCheck.exe`를 실행합니다. [빌드 순서](WINDOWS_BUILD.md)
 
-![원본 / 입력 비교 (합성 오디오 시연)](SpeakerCheck-preview.png)
-
-# SpeakerCheck 0.4.1
+# SpeakerCheck 0.4.2
 
 **WAV 분석 → 분석 실행** 한 번으로 다음 순서가 자동 진행됩니다.
 
@@ -12,7 +10,11 @@
 
 메인은 **무음 노이즈 제외 / 포함**의 두 검사 모드, 분석 실행, 큰 **Final Result PASS/FAIL**을 표시합니다. 입출력 장치는 설정에 있으며 제품번호 입력은 없습니다. 그래프는 **그래프 보기**로 펼칩니다. 결과의 검사 ID와 이력의 ID를 비교할 수 있습니다.
 
-## Windows 실행
+## Windows 64비트 포터블 빌드
+
+빌드 PC에서 `build_windows.bat`을 실행하고 기존 `sox.exe`를 선택합니다. 성공하면 `output/SpeakerCheck-0.4.2-windows-x64-portable.zip`을 배포하세요. 받는 PC에서는 Python이나 setup을 설치하지 않고 압축 해제 후 `SpeakerCheck.exe`를 실행합니다. 자세한 순서는 [WINDOWS_BUILD.md](WINDOWS_BUILD.md)에 있습니다. `setup.log`와 `build.log`에 오류가 남고 실패 시 창이 닫히지 않습니다.
+
+## Python 소스로 Windows 실행
 
 1. ZIP을 **새 폴더에 전체 압축 해제**합니다. `launch.py`만 복사하면 실행되지 않습니다.
 2. Python 3.11 이상(64 bit, Python Launcher 포함)을 설치합니다.

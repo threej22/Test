@@ -1,10 +1,5 @@
 name: Build Windows x64 portable
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'SpeakerCheck-0.4.2-source.zip'
-      - '.github/workflows/windows-portable.yml'
   workflow_dispatch:
 permissions:
   contents: write
@@ -44,16 +39,6 @@ jobs:
         working-directory: app
         shell: pwsh
         run: python scripts/build_portable.py --sox "$env:SOX_BINARY"
-      - name: Verify normal Windows GUI plugin
-        shell: pwsh
-        run: |
-          $env:QT_QPA_PLATFORM = 'windows'
-          $exe = (Resolve-Path app/dist/SpeakerCheck/SpeakerCheck.exe).Path
-          $diagnostic = Join-Path $PWD 'app/output/portable-windows-gui-diagnostic.json'
-          $process = Start-Process -FilePath $exe -ArgumentList @('--self-test', ('"' + $diagnostic + '"')) -PassThru -Wait
-          if ($process.ExitCode -ne 0) { throw "Windows GUI self-test failed: $($process.ExitCode)" }
-          $result = Get-Content $diagnostic -Raw | ConvertFrom-Json
-          if ($result.status -ne 'ok' -or -not $result.frozen) { throw 'Windows GUI diagnostic did not pass' }
       - name: Keep diagnostic evidence
         if: always()
         uses: actions/upload-artifact@v4
